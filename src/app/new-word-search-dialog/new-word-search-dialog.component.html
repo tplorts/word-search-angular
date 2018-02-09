@@ -33,6 +33,30 @@
     </mat-form-field>
 
     <mat-form-field>
+      <input matInput
+        type="text"
+        placeholder="Enter a category here if you like"
+        formControlName="category"
+        (keydown.enter)="searchCategory()"
+      />
+      <mat-spinner matSuffix
+        *ngIf="isAwaitingSearch; else searchButton"
+        color="primary"
+        [diameter]="16"
+      ></mat-spinner>
+      <ng-template #searchButton>
+        <mat-icon matSuffix
+          color="primary"
+          class="category-search-button"
+          (click)="searchCategory()"
+        >search</mat-icon>
+      </ng-template>
+      <mat-error *ngIf="category.invalid">
+        <span *ngIf="category.hasError('pattern')">The category must be a single word containing letters only</span>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
       <textarea matInput
         required
         matTextareaAutosize

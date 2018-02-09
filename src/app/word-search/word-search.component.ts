@@ -78,11 +78,23 @@ export class WordSearchComponent implements OnInit {
   ngOnInit() {
     this.initCanvas();
 
-    this.generate([
-      'astrobleme', 'bruxism', 'clepsydra', 'degust',
-      'etui', 'flocculent', 'claggy', 'gaberlunzie',
-      'onolatry', 'scrippage', 'zopissa',
-    ]);
+    this.generate(`
+      blessedness
+      beatitude
+      beatification
+      radiance
+      belonging
+      bonheur
+      cheerfulness
+      blitheness
+      contentment
+      gaiety
+      merriment
+      gladness
+      gladfulness
+      gladsomeness
+      rejoicing
+    `.trim().split(/\s+/));
   }
 
   private initCanvas(): void {
@@ -163,9 +175,10 @@ export class WordSearchComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(
       result => {
-        log.debug('The dialog was closed', result);
-        this.setSize(result.width, result.height);
-        this.generate(result.words);
+        if (result) {
+          this.setSize(result.width, result.height);
+          this.generate(result.words);
+        }
       },
     );
 
