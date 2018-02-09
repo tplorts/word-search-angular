@@ -229,11 +229,15 @@ export class WordSearchComponent implements OnInit {
       const end = new GridPosition(column, row);
       const word = this.wordSearch.extract(start, end);
       log.debug('selected:', word);
-      if (word && this.discoverWord(word)) {
-        log.debug('found:', word);
-        this.markDiscovered(start, end);
-        if (this.isComplete()) {
-          this.showComplete();
+      if (word) {
+        if (this.discoverWord(word)) {
+          log.debug('found:', word);
+          this.markDiscovered(start, end);
+          if (this.isComplete()) {
+            this.showComplete();
+          }
+        } else {
+          this.simpleSnackBar(`Sorry, but ${word} is not one of the words to find.`);
         }
       }
     } else {
