@@ -17,7 +17,7 @@ $app-primary: mat-palette($mat-deep-purple);
 $app-accent:  mat-palette($mat-teal);
 
 // The warn palette is optional (defaults to red).
-$app-warn:    mat-palette($mat-amber);
+$app-warn:    mat-palette($mat-deep-orange);
 
 // Create the theme object (a Sass map containing all of the palettes).
 $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
