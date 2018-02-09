@@ -88,7 +88,7 @@ $discovered-color: rgb(230, 230, 230);
 
 .letter-block {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   font-size: 1.25em;
   width: $block-size;
@@ -112,18 +112,14 @@ $discovered-color: rgb(230, 230, 230);
   box-shadow: 0 0 0 0 red;
 
   &.hinting {
-    box-shadow: 0 0 5px 5px red;
+    box-shadow: 0 0 5px 0 red;
     position: relative;
     z-index: 3;
+    border-radius: 50%;
   }
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.25);
     cursor: pointer;
-  }
-
-  span {
-    display: inline-block;
-    width: 1em;
   }
 }
