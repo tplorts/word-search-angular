@@ -37,13 +37,13 @@ export class NewWordSearchDialogComponent implements OnInit {
       width: new FormControl(this.data.width, [
         Validators.required,
         Validators.min(1),
-        Validators.max(1000),
+        Validators.max(100),
         Validators.pattern(/^\d+$/),
       ]),
       height: new FormControl(this.data.height, [
         Validators.required,
         Validators.min(1),
-        Validators.max(1000),
+        Validators.max(100),
         Validators.pattern(/^\d+$/),
       ]),
       wordsText: new FormControl(this.data.words.join('\n'), [
