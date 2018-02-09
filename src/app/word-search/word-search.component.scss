@@ -3,6 +3,12 @@
 
 $block-size: 2rem;
 $discovered-color: $color-primary;
+$hover-color: map-get($palette-accent, 100);
+$selected-color: map-get($palette-primary, 100);
+$hint-colors: (
+  map-get($palette-primary, 200),
+  map-get($palette-accent, 200),
+);
 $corner-radius: $block-size / 2;
 $canvas-stroke-color: map-get($palette-accent, 100);
 
@@ -135,12 +141,15 @@ small {
   height: $block-size;
   transition: all 0.2s;
   background-color: rgba(0, 0, 0, 0);
-  border: 1px dotted;
-  border-color: rgba(0, 0, 0, 0);
   border-radius: $corner-radius;
 
+  &:hover {
+    background-color: $hover-color;
+    cursor: pointer;
+  }
+
   &.selected {
-    border-color: rgba(0, 0, 0, 0.8);
+    background-color: $selected-color;
   }
 
   &.discovered {
@@ -148,16 +157,25 @@ small {
     font-weight: bold;
   }
 
-  box-shadow: 0 0 0 0 red;
-
   &.hinting {
-    box-shadow: 0 0 5px 0 red;
     position: relative;
     z-index: 3;
+    animation: hinting 1s infinite;
+  }
+}
+
+$n: length($hint-colors);
+$size: 1rem;
+
+@keyframes hinting {
+  from,
+  to {
+    background-color: nth($hint-colors, 1);
   }
 
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.25);
-    cursor: pointer;
+  @for $i from 2 through $n {
+    #{($i - 1) * 100% / $n} {
+      background-color: nth($hint-colors, $i);
+    }
   }
 }
