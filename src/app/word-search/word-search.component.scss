@@ -1,15 +1,22 @@
+
+$block-size: 2rem;
+$discovered-color: rgb(230, 230, 230);
+$corner-radius: $block-size / 2;
+
 .game-card {
   background-color: rgb(248, 252, 248);
+  overflow: scroll;
 }
 
 .wrapper {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .grid {
-  box-shadow: 0 0 6px -2px;
+  box-shadow: 0 0 10px -2px;
+  border-radius: $corner-radius;
   background-color: rgb(252, 248, 248);
   position: relative;
 
@@ -36,14 +43,14 @@
 .word-list {
   text-align: left;
   font-size: 1.5em;
-  padding-left: 2em;
+  padding: 0 2rem;
 
   h4 {
-    margin-bottom: 0.5em;
+    margin-bottom: 0.5rem;
   }
 
   ul {
-    margin-top: 0.5em;
+    margin-top: 0.5rem;
     padding-left: 0;
   }
 
@@ -83,9 +90,6 @@ small {
   color: #999;
 }
 
-$block-size: 2rem;
-$discovered-color: rgb(230, 230, 230);
-
 .letter-block {
   display: flex;
   justify-content: center;
@@ -97,6 +101,7 @@ $discovered-color: rgb(230, 230, 230);
   background-color: rgba(0, 0, 0, 0);
   border: 1px dotted;
   border-color: rgba(0, 0, 0, 0);
+  border-radius: $corner-radius;
 
   &.selected {
     border-color: rgba(0, 0, 0, 0.8);
@@ -115,7 +120,6 @@ $discovered-color: rgb(230, 230, 230);
     box-shadow: 0 0 5px 0 red;
     position: relative;
     z-index: 3;
-    border-radius: 50%;
   }
 
   &:hover {

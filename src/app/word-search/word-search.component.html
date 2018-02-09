@@ -31,7 +31,7 @@
                   [ngClass]="blockClasses(row, column)"
                   (click)="select(row, column)"
                 >
-                  <span [innerHtml]="letter(row, column)"></span>
+                  {{ letter(row, column) }}
                 </div>
               </td>
             </tr>
