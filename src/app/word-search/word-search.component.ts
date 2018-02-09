@@ -76,13 +76,13 @@ export class WordSearchComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.initCanvas();
+
     this.generate([
       'astrobleme', 'bruxism', 'clepsydra', 'degust',
       'etui', 'flocculent', 'claggy', 'gaberlunzie',
       'onolatry', 'scrippage', 'zopissa',
     ]);
-
-    window.setTimeout(() => this.initCanvas());
   }
 
   private initCanvas(): void {
@@ -93,8 +93,6 @@ export class WordSearchComponent implements OnInit {
       log.warn('Could not get the canvas rending context');
       return;
     }
-    this.updateCanvasSize();
-    // this.drawLine(new GridPosition(2, 3), new GridPosition(10, 11));
   }
 
   private updateCanvasSize() {
@@ -150,6 +148,8 @@ export class WordSearchComponent implements OnInit {
 
     this._revealedPendingWords = this.showPendingWords;
     this._hintCount = 0;
+
+    window.setTimeout(() => this.updateCanvasSize());
   }
 
   public createNewWordSearch(): void {
@@ -258,7 +258,7 @@ export class WordSearchComponent implements OnInit {
     if (config) {
       this._hintCount++;
       this.setHint(config.startingPosition);
-      Observable.timer(1500).subscribe(() => this.setHint(null));
+      Observable.timer(3000).subscribe(() => this.setHint(null));
     } else {
       this.simpleSnackBar(`Whoops!  I could not find ${word}.`);
     }
