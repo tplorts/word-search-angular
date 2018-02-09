@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>Create a new Word Search</h2>
+<mat-dialog-content>
+
+  <form [formGroup]="formGroup">
+    <mat-form-field>
+      <input matInput
+        required
+        type="number"
+        placeholder="Width"
+        formControlName="width"
+      />
+      <mat-error *ngIf="width.invalid">
+        <span *ngIf="width.hasError('required')">Width is required</span>
+        <span *ngIf="width.hasError('min')">That's too small!</span>
+        <span *ngIf="width.hasError('max')">That's too large!</span>
+        <span *ngIf="width.hasError('pattern')">Width must be a whole number</span>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput
+        required
+        type="number"
+        placeholder="Height"
+        formControlName="height"
+      />
+      <mat-error *ngIf="height.invalid">
+        <span *ngIf="height.hasError('required')">Height is required</span>
+        <span *ngIf="height.hasError('min')">That's too small!</span>
+        <span *ngIf="height.hasError('max')">That's too large!</span>
+        <span *ngIf="height.hasError('pattern')">Height must be a whole number</span>
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <textarea matInput
+        required
+        matTextareaAutosize
+        matAutosizeMaxRows="10"
+        placeholder="Enter one word per line"
+        formControlName="wordsText"
+      ></textarea>
+      <mat-error *ngIf="wordsText.invalid">
+        <span *ngIf="wordsText.hasError('required')">You need to choose some words</span>
+        <span *ngIf="wordsText.hasError('pattern')">Please enter one word per line, letters only</span>
+      </mat-error>
+    </mat-form-field>
+  </form>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="parameters" [disabled]="formGroup.invalid">Create</button>
+</mat-dialog-actions>
