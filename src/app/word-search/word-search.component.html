@@ -1,3 +1,4 @@
+<div class="canvas-stroke" #canvasStroke></div>
 
 <mat-card>
   <mat-card-content>
@@ -21,8 +22,8 @@
     <div class="wrapper">
 
       <div>
-        <div class="grid">
-          <!-- <canvas id="grid-background-canvas"></canvas> -->
+        <div class="grid" #grid>
+          <canvas #gridCanvas width="0" height="0"></canvas>
           <table>
             <tr *ngFor="let row of rows">
               <td *ngFor="let column of columns">

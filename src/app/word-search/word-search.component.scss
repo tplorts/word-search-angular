@@ -2,8 +2,10 @@
 
 
 $block-size: 2rem;
-$discovered-color: rgb(230, 230, 230);
+$discovered-color: $color-primary;
 $corner-radius: $block-size / 2;
+$canvas-stroke-color: map-get($palette-accent, 100);
+
 
 .game-card {
   background-color: rgb(248, 252, 248);
@@ -41,6 +43,10 @@ $corner-radius: $block-size / 2;
   justify-content: space-between;
 }
 
+.canvas-stroke {
+  color: $canvas-stroke-color;
+}
+
 .grid {
   box-shadow: 0 0 10px -2px;
   border-radius: $corner-radius;
@@ -55,7 +61,6 @@ $corner-radius: $block-size / 2;
     right: 0;
     z-index: 1;
     border-radius: inherit;
-    background-color: grey;
   }
 
   table {
@@ -139,10 +144,8 @@ small {
   }
 
   &.discovered {
-    color: blue;
+    color: $discovered-color;
     font-weight: bold;
-    background-color: $discovered-color;
-    border: 1px solid $discovered-color;
   }
 
   box-shadow: 0 0 0 0 red;

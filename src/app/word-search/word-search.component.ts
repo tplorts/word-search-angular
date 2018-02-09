@@ -1,6 +1,8 @@
 import {
   Component,
   OnInit,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import {
   MatSnackBar,
@@ -8,6 +10,7 @@ import {
 } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/timer';
+import { toNumber } from 'lodash';
 
 import { Logger } from '../core/logger.service';
 import { WordSearchService } from './word-search.service';
@@ -52,6 +55,13 @@ export class WordSearchComponent implements OnInit {
   private _revealedPendingWords: boolean;
   private _hintCount: number;
 
+  @ViewChild('grid') gridRef: ElementRef;
+  @ViewChild('gridCanvas') gridCanvasRef: ElementRef;
+  @ViewChild('canvasStroke') canvasStrokeRef: ElementRef;
+  private canvasStrokeColor: string;
+  private gridTileDisplaySize: number;
+  private drawContext: CanvasRenderingContext2D;
+
   constructor(
     private wordSearchService: WordSearchService,
     private snackBar: MatSnackBar,
@@ -72,19 +82,45 @@ export class WordSearchComponent implements OnInit {
       'onolatry', 'scrippage', 'zopissa',
     ]);
 
-    this.initCanvas();
+    window.setTimeout(() => this.initCanvas());
   }
 
   private initCanvas(): void {
-    // const canvas = <HTMLCanvasElement> document.querySelector('#grid-background-canvas');
-    // const drawing = canvas.getContext('2d');
-    // if (!drawing) {
-    //   return;
-    // }
-    // drawing.beginPath();
-    // drawing.moveTo(10, 10);
-    // drawing.lineTo(100, 100);
-    // drawing.stroke();
+    const strokeRef = <Element> this.canvasStrokeRef.nativeElement;
+    this.canvasStrokeColor = window.getComputedStyle(strokeRef).color;
+    this.drawContext = this.canvas.getContext('2d');
+    if (!this.drawContext) {
+      log.warn('Could not get the canvas rending context');
+      return;
+    }
+    this.updateCanvasSize();
+    // this.drawLine(new GridPosition(2, 3), new GridPosition(10, 11));
+  }
+
+  private updateCanvasSize() {
+    const gridContainer = <Element> this.gridRef.nativeElement;
+    const gridDisplaySize = gridContainer.getBoundingClientRect();
+    this.canvas.setAttribute('width', gridDisplaySize.width.toString());
+    this.canvas.setAttribute('height', gridDisplaySize.height.toString());
+    this.gridTileDisplaySize = gridContainer.querySelector('td').getBoundingClientRect().width;
+  }
+
+  private get canvas(): HTMLCanvasElement {
+    return <HTMLCanvasElement> this.gridCanvasRef.nativeElement;
+  }
+
+  private drawLine(from: GridPosition, to: GridPosition) {
+    const CanvasHeight = toNumber(this.canvas.getAttribute('height'));
+    const dc = this.drawContext;
+    const tileSize = this.gridTileDisplaySize;
+    const toPixels = (letterPosition: number) => letterPosition * tileSize + tileSize / 2;
+    dc.strokeStyle = this.canvasStrokeColor;
+    dc.lineCap = 'round';
+    dc.lineWidth = 3;
+    dc.beginPath();
+    dc.moveTo(toPixels(from.x), CanvasHeight - toPixels(from.y));
+    dc.lineTo(toPixels(to.x), CanvasHeight - toPixels(to.y));
+    dc.stroke();
   }
 
   private setSize(width: number, height: number): void {
@@ -211,6 +247,7 @@ export class WordSearchComponent implements OnInit {
 
   public markDiscovered(start: GridPosition, end: GridPosition): void {
     this.discoveryGrid.forEach(start, end, (_, pos) => { this.discoveryGrid.set(pos, true); });
+    this.drawLine(start, end);
   }
 
   public revealHint(word: string): void {
