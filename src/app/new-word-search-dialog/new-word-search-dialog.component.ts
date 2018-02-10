@@ -7,6 +7,7 @@ import {
   MatDialog,
   MatDialogRef,
   MAT_DIALOG_DATA,
+  MatSnackBar,
 } from '@angular/material';
 import {
   FormControl,
@@ -14,11 +15,15 @@ import {
   FormGroup,
   FormBuilder,
 } from '@angular/forms';
-
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/finally';
+import { uniqBy } from 'lodash';
 import { HyponymsQueryService } from '@app/shared/hyponyms-query.service';
 
 
 const lettersOnly = (s: string) => s.replace(/[^A-Z]/gi, '');
+const asUpperCase = (s: string) => s.toUpperCase();
+
 
 @Component({
   selector: 'app-new-word-search-dialog',
@@ -35,6 +40,7 @@ export class NewWordSearchDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public priorData: any,
     private formBuilder: FormBuilder,
     private hyponymQuery: HyponymsQueryService,
+    private snackBar: MatSnackBar,
   ) {
     this._isAwaitingSearch = false;
   }
@@ -47,15 +53,18 @@ export class NewWordSearchDialogComponent implements OnInit {
       Validators.pattern(/^\d+$/),
     ];
     const WordPattern = `[A-Za-z]*`;
+    const SingleWordRegex = new RegExp(`^${WordPattern}$`);
+    const MultiWordRegex = new RegExp(`^(${WordPattern}\n)*${WordPattern}$`);
+
     this.formGroup = this.formBuilder.group({
       width: new FormControl(this.priorData.width, SizeValidators),
       height: new FormControl(this.priorData.height, SizeValidators),
       category: new FormControl('', [
-        Validators.pattern(new RegExp(`^${WordPattern}$`)),
+        Validators.pattern(SingleWordRegex),
       ]),
       wordsText: new FormControl(this.priorData.words.join('\n'), [
         Validators.required,
-        Validators.pattern(new RegExp(`^(${WordPattern}\n)*${WordPattern}$`)),
+        Validators.pattern(MultiWordRegex),
       ]),
     });
   }
@@ -79,15 +88,22 @@ export class NewWordSearchDialogComponent implements OnInit {
 
   public searchCategory() {
     this._isAwaitingSearch = true;
-    console.log(this.categoryField.value);
-    this.hyponymQuery.query(this.categoryField.value).subscribe((hyponyms: string[]) => {
-      console.log(hyponyms);
+    const word = this.category;
+    this.hyponymQuery.query(word)
+    .catch(err => {
+      this.simpleSnackBar(`Could not connect to find words.  Please enter words manually for now.`);
+      throw err;
+    })
+    .finally(() => (this._isAwaitingSearch = false))
+    .subscribe((hyponyms: string[]) => {
       if (hyponyms && hyponyms.length > 0) {
-        this.wordsField.setValue(hyponyms.map(lettersOnly).join('\n'));
+        // Important that we strip any non-letter characters before
+        // eliminating duplicates.
+        const uniqueHyponyms = uniqBy(hyponyms.map(lettersOnly), asUpperCase);
+        this.wordsField.setValue(uniqueHyponyms.join('\n'));
       } else {
-        // TODO: snackbar to say it didn't return any restults, try something else
+        this.simpleSnackBar(`${word} didn't yield any results; try another`);
       }
-      this._isAwaitingSearch = false;
     });
   }
 
@@ -99,7 +115,12 @@ export class NewWordSearchDialogComponent implements OnInit {
     return {
       width: this.widthField.value,
       height: this.heightField.value,
+      category: this.category,
       words: this.words,
     };
+  }
+
+  private simpleSnackBar(message: string) {
+    this.snackBar.open(message, '', { duration: 5e3 });
   }
 }
