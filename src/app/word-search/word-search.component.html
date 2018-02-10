@@ -1,106 +1,93 @@
 <div class="canvas-stroke" #canvasStroke></div>
 
-<mat-card>
-  <mat-card-content>
-    <button
-      mat-raised-button
-      (click)="generate()"
-      color="primary"
-    >
-      Regenerate with same configuration
-    </button>
-    <button
-      mat-raised-button
-      (click)="createNewWordSearch()"
-      color="primary"
-    >
-      Create a new Word Search
-    </button>
-  </mat-card-content>
-</mat-card>
+<section class="actions">
+  <button
+    mat-raised-button
+    (click)="generate()"
+    color="primary"
+  >
+    Regenerate with same configuration
+  </button>
+  <button
+    mat-raised-button
+    (click)="createNewWordSearch()"
+    color="primary"
+  >
+    Create a new Word Search
+  </button>
+</section>
 
-<mat-card class="game-card">
-  <mat-card-content>
-    <div class="wrapper">
+<main>
+  <div class="grid">
+    <canvas #gridCanvas width="0" height="0"></canvas>
+    <table #gridTable>
+      <tr *ngFor="let row of rows">
+        <td *ngFor="let column of columns">
+          <div
+            class="letter-block"
+            [ngClass]="blockClasses(row, column)"
+            (click)="select(row, column)"
+          >
+            {{ letter(row, column) }}
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
 
-      <div>
-        <div class="grid" #grid>
-          <canvas #gridCanvas width="0" height="0"></canvas>
-          <table>
-            <tr *ngFor="let row of rows">
-              <td *ngFor="let column of columns">
-                <div
-                  class="letter-block"
-                  [ngClass]="blockClasses(row, column)"
-                  (click)="select(row, column)"
-                >
-                  {{ letter(row, column) }}
-                </div>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-
-      <div class="word-list">
-<!--           matTooltip="This will reveal to you the list of words hidden in this word seach.  You will receive a bonus for solving the word search without revealing the pending words!"
-          [matTooltipPosition]="'above'"
- -->
-         <mat-slide-toggle
-          [(ngModel)]="showPendingWords"
-        >Reveal Pending Words</mat-slide-toggle>
-        <div class="pending-words" *ngIf="showPendingWords">
-          <h4>Pending</h4>
-          <ul class="pending-list">
-            <li *ngFor="let word of pendingWords">
-              <button mat-icon-button
-                (click)="revealHint(word)"
-              >
-                <mat-icon
-                  class="hint-icon"
-                  aria-label="Reveal a hint"
-                  matTooltip="Reveal a hint"
-                >visibility</mat-icon>
-              </button>
-              <span>{{ word }}</span>
-            </li>
-          </ul>
-        </div>
-        <div class="discovered-words">
-          <h4>Discovered</h4>
-          <small *ngIf="discoveredWords.length === 0">
-            Nothing yet&hellip;
-          </small>
-          <ul>
-            <li *ngFor="let word of discoveredWords">
-              {{ word }}
-            </li>
-          </ul>
-        </div>
-      </div>
-
+  <div class="word-bank">
+    <mat-slide-toggle
+      [(ngModel)]="showPendingWords"
+    >Reveal Pending Words</mat-slide-toggle>
+    <div class="pending-words" *ngIf="showPendingWords">
+      <h3>Pending</h3>
+      <ul class="pending-list">
+        <li *ngFor="let word of pendingWords">
+          <button mat-icon-button
+            class="hint-button"
+            (click)="revealHint(word)"
+          >
+            <mat-icon
+              class="hint-icon"
+              aria-label="Reveal a hint"
+              matTooltip="Reveal a hint"
+            >visibility</mat-icon>
+          </button>
+          <span>{{ word }}</span>
+        </li>
+      </ul>
     </div>
-  </mat-card-content>
-</mat-card>
+    <div class="discovered-words">
+      <h3>
+        Discovered
+        <small *ngIf="discoveredWords.length === -1">
+          Nothing yet&hellip;
+        </small>
+      </h3>
+      <ul>
+        <li *ngFor="let word of discoveredWords">
+          <span>{{ word }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</main>
 
-<mat-card>
-  <mat-card-content>
+<section class="status">
 <!-- 
-    <div>
-      <div *ngIf="revealedPendingWords; then revealedBlock else unrevealedBlock"></div>
-      <ng-template #revealedBlock>
-        <mat-icon>info</mat-icon>
-        You have revealed the pending words. You can no longer receive the bonus.
-      </ng-template>
-      <ng-template #unrevealedBlock>
-        <mat-icon>grade</mat-icon>
-        You still haven't revealed the pending words.
-      </ng-template>
-    </div>
+  <div>
+    <div *ngIf="revealedPendingWords; then revealedBlock else unrevealedBlock"></div>
+    <ng-template #revealedBlock>
+      <mat-icon>info</mat-icon>
+      You have revealed the pending words. You can no longer receive the bonus.
+    </ng-template>
+    <ng-template #unrevealedBlock>
+      <mat-icon>grade</mat-icon>
+      You still haven't revealed the pending words.
+    </ng-template>
+  </div>
  -->
-    <div>
-      <p>{{ hintCount }} hints shown so far</p>
-    </div>
-
-  </mat-card-content>
-</mat-card>
+  <div>
+    <p>{{ hintCount }} hints shown so far</p>
+  </div>
+</section>

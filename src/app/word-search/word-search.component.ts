@@ -55,7 +55,7 @@ export class WordSearchComponent implements OnInit {
   private _revealedPendingWords: boolean;
   private _hintCount: number;
 
-  @ViewChild('grid') gridRef: ElementRef;
+  @ViewChild('gridTable') gridTableRef: ElementRef;
   @ViewChild('gridCanvas') gridCanvasRef: ElementRef;
   @ViewChild('canvasStroke') canvasStrokeRef: ElementRef;
   private canvasStrokeColor: string;
@@ -108,15 +108,18 @@ export class WordSearchComponent implements OnInit {
   }
 
   private updateCanvasSize() {
-    const gridContainer = <Element> this.gridRef.nativeElement;
-    const gridDisplaySize = gridContainer.getBoundingClientRect();
+    this.gridTileDisplaySize = this.table.querySelector('td').getBoundingClientRect().width;
+    const gridDisplaySize = this.table.getBoundingClientRect();
     this.canvas.setAttribute('width', gridDisplaySize.width.toString());
     this.canvas.setAttribute('height', gridDisplaySize.height.toString());
-    this.gridTileDisplaySize = gridContainer.querySelector('td').getBoundingClientRect().width;
   }
 
   private get canvas(): HTMLCanvasElement {
-    return <HTMLCanvasElement> this.gridCanvasRef.nativeElement;
+    return this.gridCanvasRef.nativeElement;
+  }
+
+  private get table(): HTMLElement {
+    return this.gridTableRef.nativeElement;
   }
 
   private drawLine(from: GridPosition, to: GridPosition) {
@@ -142,6 +145,8 @@ export class WordSearchComponent implements OnInit {
 
     this._columns = integerSequence(this._width);
     this._rows = integerSequence(this._height).reverse();
+
+    window.setTimeout(() => this.updateCanvasSize(), 100);
   }
 
   public generate(newWords?: string[]): void {
@@ -160,8 +165,6 @@ export class WordSearchComponent implements OnInit {
 
     this._revealedPendingWords = this.showPendingWords;
     this._hintCount = 0;
-
-    window.setTimeout(() => this.updateCanvasSize());
   }
 
   public createNewWordSearch(): void {

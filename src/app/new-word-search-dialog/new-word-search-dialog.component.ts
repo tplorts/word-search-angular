@@ -90,7 +90,7 @@ export class NewWordSearchDialogComponent implements OnInit {
       console.log(hyponyms);
       this.wordsText.setValue(hyponyms.map(lettersOnly).join('\n'));
       this._isAwaitingSearch = false;
-    })
+    });
   }
 
   public get isAwaitingSearch() {

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { Title } from '@angular/platform-browser';
+import { Title, DOCUMENT } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs/observable/merge';
 import { filter, map, mergeMap } from 'rxjs/operators';
@@ -17,11 +17,14 @@ const log = new Logger('App');
 })
 export class AppComponent implements OnInit {
 
-  constructor(private router: Router,
-              private activatedRoute: ActivatedRoute,
-              private titleService: Title,
-              private translateService: TranslateService,
-              private i18nService: I18nService) { }
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private titleService: Title,
+    private translateService: TranslateService,
+    private i18nService: I18nService,
+    @Inject(DOCUMENT) private document: Document,
+  ) { }
 
   ngOnInit() {
     // Setup logger
@@ -55,6 +58,8 @@ export class AppComponent implements OnInit {
           this.titleService.setTitle(this.translateService.instant(title));
         }
       });
+
+    this.document.body.classList.add('mat-typography');
   }
 
 }
