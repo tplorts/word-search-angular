@@ -1,0 +1,52 @@
+@import "colors";
+
+
+$DefaultScrollbarThickness: 10px;
+
+
+@mixin custom-scrollbar($scrollbarThickness: $DefaultScrollbarThickness) {
+
+  $scrollbarTrackColor: map-get($palette-accent, 50);
+  $scrollbarThumbColor: map-get($palette-accent, 200);
+  $shadowSize: $scrollbarThickness / 2;
+
+  &::-webkit-scrollbar {
+    background-color: $scrollbarTrackColor;
+
+    &-track,
+    &-thumb {
+      box-shadow: inset 0 0 $shadowSize rgba(0, 0, 0, 0.3);
+      border-radius: $scrollbarThickness;
+    }
+
+    &-track {
+      background-color: $scrollbarTrackColor;
+    }
+
+    &-thumb {
+      background-color: $scrollbarThumbColor;
+    }
+  }
+}
+
+
+@mixin custom-horizontal-scrollbar($scrollbarThickness: $DefaultScrollbarThickness) {
+  overflow-x: scroll;
+
+  &::-webkit-scrollbar {
+    height: $scrollbarThickness;
+  }
+
+  @include custom-scrollbar($scrollbarThickness);
+}
+
+
+@mixin custom-vertical-scrollbar($scrollbarThickness: $DefaultScrollbarThickness) {
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    width: $scrollbarThickness;
+  }
+
+  @include custom-scrollbar($scrollbarThickness);
+}

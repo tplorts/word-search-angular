@@ -1,4 +1,5 @@
 @import "src/style/colors";
+@import "src/style/utilities";
 
 
 $block-size: 2rem;
@@ -11,6 +12,7 @@ $hint-colors: (
 );
 $corner-radius: $block-size / 2;
 $canvas-stroke-color: map-get($palette-accent, 100);
+
 
 .canvas-stroke {
   color: $canvas-stroke-color;
@@ -28,31 +30,8 @@ main {
   align-items: flex-start;
   background-color: transparentize(map-get($palette-primary, 50), 0.75);
   box-shadow: none;
-  overflow-x: scroll;
 
-  $scrollbar-thickness: 10px;
-  $scrollbar-track-color: map-get($palette-accent, 50);
-  $scrollbar-thumb-color: map-get($palette-accent, 200);
-  $shadow-size: $scrollbar-thickness / 2;
-
-  &::-webkit-scrollbar {
-    height: $scrollbar-thickness;
-    background-color: $scrollbar-track-color;
-
-    &-track,
-    &-thumb {
-      box-shadow: inset 0 0 $shadow-size rgba(0, 0, 0, 0.3);
-      border-radius: $scrollbar-thickness;
-    }
-
-    &-track {
-      background-color: $scrollbar-track-color;
-    }
-
-    &-thumb {
-      background-color: $scrollbar-thumb-color;
-    }
-  }
+  @include custom-horizontal-scrollbar;
 }
 
 .grid {
