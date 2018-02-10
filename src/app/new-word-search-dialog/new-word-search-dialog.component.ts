@@ -32,33 +32,30 @@ export class NewWordSearchDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<NewWordSearchDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private fb: FormBuilder,
-    private hyponyms: HyponymsQueryService,
+    @Inject(MAT_DIALOG_DATA) public priorData: any,
+    private formBuilder: FormBuilder,
+    private hyponymQuery: HyponymsQueryService,
   ) {
     this._isAwaitingSearch = false;
   }
 
   ngOnInit() {
-    this.formGroup = this.fb.group({
-      width: new FormControl(this.data.width, [
-        Validators.required,
-        Validators.min(1),
-        Validators.max(100),
-        Validators.pattern(/^\d+$/),
-      ]),
-      height: new FormControl(this.data.height, [
-        Validators.required,
-        Validators.min(1),
-        Validators.max(100),
-        Validators.pattern(/^\d+$/),
-      ]),
+    const SizeValidators = [
+      Validators.required,
+      Validators.min(1),
+      Validators.max(100),
+      Validators.pattern(/^\d+$/),
+    ];
+    const WordPattern = `[A-Za-z]*`;
+    this.formGroup = this.formBuilder.group({
+      width: new FormControl(this.priorData.width, SizeValidators),
+      height: new FormControl(this.priorData.height, SizeValidators),
       category: new FormControl('', [
-        Validators.pattern(/^[A-Za-z]*$/),
+        Validators.pattern(new RegExp(`^${WordPattern}$`)),
       ]),
-      wordsText: new FormControl(this.data.words.join('\n'), [
+      wordsText: new FormControl(this.priorData.words.join('\n'), [
         Validators.required,
-        Validators.pattern(/^([A-Za-z]+\n)*[A-Za-z]+$/),
+        Validators.pattern(new RegExp(`^(${WordPattern}\n)*${WordPattern}$`)),
       ]),
     });
   }
@@ -67,28 +64,29 @@ export class NewWordSearchDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  public get width() {
-    return this.formGroup.get('width');
-  }
+  public get widthField() { return this.formGroup.get('width'); }
+  public get heightField() { return this.formGroup.get('height'); }
+  public get wordsField() { return this.formGroup.get('wordsText'); }
+  public get categoryField() { return this.formGroup.get('category'); }
 
-  public get height() {
-    return this.formGroup.get('height');
-  }
-
-  public get wordsText() {
-    return this.formGroup.get('wordsText');
-  }
-
-  public get category() {
-    return this.formGroup.get('category');
+  public get width(): number { return this.widthField.value; }
+  public get height(): number { return this.heightField.value; }
+  public get category(): string { return this.categoryField.value; }
+  public get words(): string[] {
+    const wordsText: string = this.wordsField.value;
+    return wordsText && wordsText.split(/\s*?\n\s*?/).filter(w => w);
   }
 
   public searchCategory() {
     this._isAwaitingSearch = true;
-    console.log(this.category.value);
-    this.hyponyms.query(this.category.value).subscribe((hyponyms: string[]) => {
+    console.log(this.categoryField.value);
+    this.hyponymQuery.query(this.categoryField.value).subscribe((hyponyms: string[]) => {
       console.log(hyponyms);
-      this.wordsText.setValue(hyponyms.map(lettersOnly).join('\n'));
+      if (hyponyms && hyponyms.length > 0) {
+        this.wordsField.setValue(hyponyms.map(lettersOnly).join('\n'));
+      } else {
+        // TODO: snackbar to say it didn't return any restults, try something else
+      }
       this._isAwaitingSearch = false;
     });
   }
@@ -97,13 +95,11 @@ export class NewWordSearchDialogComponent implements OnInit {
     return this._isAwaitingSearch;
   }
 
-  public get parameters(): object {
-    const w = this.wordsText.value;
-    const result = {
-      width: this.width.value,
-      height: this.height.value,
-      words: w && w.trim().split(/\s+/),
+  public get parameters() {
+    return {
+      width: this.widthField.value,
+      height: this.heightField.value,
+      words: this.words,
     };
-    return result;
   }
 }

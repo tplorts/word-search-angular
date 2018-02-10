@@ -1,4 +1,5 @@
 <h2 mat-dialog-title>Create a new Word Search</h2>
+
 <mat-dialog-content>
 
   <form [formGroup]="formGroup">
@@ -9,11 +10,11 @@
         placeholder="Width"
         formControlName="width"
       />
-      <mat-error *ngIf="width.invalid">
-        <span *ngIf="width.hasError('required')">Width is required</span>
-        <span *ngIf="width.hasError('min')">That's too small!</span>
-        <span *ngIf="width.hasError('max')">That's too large!</span>
-        <span *ngIf="width.hasError('pattern')">Width must be a whole number</span>
+      <mat-error *ngIf="widthField.invalid">
+        <span *ngIf="widthField.hasError('required')">Width is required</span>
+        <span *ngIf="widthField.hasError('min')">That's too small!</span>
+        <span *ngIf="widthField.hasError('max')">That's too large!</span>
+        <span *ngIf="widthField.hasError('pattern')">Width must be a whole number</span>
       </mat-error>
     </mat-form-field>
 
@@ -24,11 +25,11 @@
         placeholder="Height"
         formControlName="height"
       />
-      <mat-error *ngIf="height.invalid">
-        <span *ngIf="height.hasError('required')">Height is required</span>
-        <span *ngIf="height.hasError('min')">That's too small!</span>
-        <span *ngIf="height.hasError('max')">That's too large!</span>
-        <span *ngIf="height.hasError('pattern')">Height must be a whole number</span>
+      <mat-error *ngIf="heightField.invalid">
+        <span *ngIf="heightField.hasError('required')">Height is required</span>
+        <span *ngIf="heightField.hasError('min')">That's too small!</span>
+        <span *ngIf="heightField.hasError('max')">That's too large!</span>
+        <span *ngIf="heightField.hasError('pattern')">Height must be a whole number</span>
       </mat-error>
     </mat-form-field>
 
@@ -51,8 +52,8 @@
           (click)="searchCategory()"
         >search</mat-icon>
       </ng-template>
-      <mat-error *ngIf="category.invalid">
-        <span *ngIf="category.hasError('pattern')">The category must be a single word containing letters only</span>
+      <mat-error *ngIf="categoryField.invalid">
+        <span *ngIf="categoryField.hasError('pattern')">The category must be a single word containing letters only</span>
       </mat-error>
     </mat-form-field>
 
@@ -64,15 +65,21 @@
         placeholder="Enter one word per line"
         formControlName="wordsText"
       ></textarea>
-      <mat-error *ngIf="wordsText.invalid">
-        <span *ngIf="wordsText.hasError('required')">You need to choose some words</span>
-        <span *ngIf="wordsText.hasError('pattern')">Please enter one word per line, letters only</span>
+      <mat-error *ngIf="wordsField.invalid">
+        <span *ngIf="wordsField.hasError('required')">You need to choose some words</span>
+        <span *ngIf="wordsField.hasError('pattern')">Please enter one word per line, letters only</span>
       </mat-error>
     </mat-form-field>
   </form>
 
 </mat-dialog-content>
-<mat-dialog-actions>
+
+<mat-dialog-actions class="actions">
   <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-button [mat-dialog-close]="parameters" [disabled]="formGroup.invalid">Create</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [mat-dialog-close]="parameters"
+    [disabled]="formGroup.invalid"
+  >Create</button>
 </mat-dialog-actions>
