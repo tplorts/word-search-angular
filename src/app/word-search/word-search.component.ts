@@ -24,6 +24,7 @@ import {
   NewWordSearchDialogComponent,
   IWordSearchParameters,
 } from '@app/new-word-search-dialog/new-word-search-dialog.component';
+import { easeInOutCubic } from '@app/shared/easing';
 
 const log = new Logger('WordSearch.compenent');
 
@@ -41,7 +42,7 @@ class CanvasLineAnimation {
     private context: CanvasRenderingContext2D,
     private from: CanvasPoint,
     private to: CanvasPoint,
-    private durationMs: number,
+    private durationMs: number = 2000,
   ) {
     this.delta = {
       x: to.x - from.x,
@@ -64,12 +65,13 @@ class CanvasLineAnimation {
     }
     const elapsedMs = presentTime - this.beginTime;
     const proportion = Math.min(1, elapsedMs / this.durationMs);
+    const d = easeInOutCubic(proportion);
     const dc = this.context;
     dc.beginPath();
     dc.moveTo(this.from.x, this.from.y);
     dc.lineTo(
-      this.from.x + proportion * this.delta.x,
-      this.from.y + proportion * this.delta.y,
+      this.from.x + d * this.delta.x,
+      this.from.y + d * this.delta.y,
     );
     dc.stroke();
     if (proportion < 1) {
@@ -195,7 +197,6 @@ export class WordSearchComponent implements OnInit {
       dc,
       this.toCanvasPoint(from),
       this.toCanvasPoint(to),
-      1000
     );
     animation.begin();
   }
