@@ -25,10 +25,58 @@ import {
   IWordSearchParameters,
 } from '@app/new-word-search-dialog/new-word-search-dialog.component';
 
-
-
 const log = new Logger('WordSearch.compenent');
 
+interface CanvasPoint {
+  x: number;
+  y: number;
+}
+
+
+class CanvasLineAnimation {
+  private beginTime: number;
+  private delta: CanvasPoint;
+
+  constructor(
+    private context: CanvasRenderingContext2D,
+    private from: CanvasPoint,
+    private to: CanvasPoint,
+    private durationMs: number,
+  ) {
+    this.delta = {
+      x: to.x - from.x,
+      y: to.y - from.y,
+    };
+  }
+
+  public begin() {
+    this.beginTime = null;
+    this.requestNextFrame();
+  }
+
+  private requestNextFrame() {
+    window.requestAnimationFrame(t => this.step(t));
+  }
+
+  private step(presentTime: number) {
+    if (!this.beginTime) {
+      this.beginTime = presentTime;
+    }
+    const elapsedMs = presentTime - this.beginTime;
+    const proportion = Math.min(1, elapsedMs / this.durationMs);
+    const dc = this.context;
+    dc.beginPath();
+    dc.moveTo(this.from.x, this.from.y);
+    dc.lineTo(
+      this.from.x + proportion * this.delta.x,
+      this.from.y + proportion * this.delta.y,
+    );
+    dc.stroke();
+    if (proportion < 1) {
+      this.requestNextFrame();
+    }
+  }
+}
 
 
 @Component({
@@ -63,6 +111,7 @@ export class WordSearchComponent implements OnInit {
   @ViewChild('gridCanvas') gridCanvasRef: ElementRef;
   @ViewChild('canvasStroke') canvasStrokeRef: ElementRef;
   private canvasStrokeColor: string;
+  private canvasSize: number;
   private gridTileDisplaySize: number;
   private drawContext: CanvasRenderingContext2D;
 
@@ -114,8 +163,9 @@ export class WordSearchComponent implements OnInit {
   private updateCanvasSize() {
     this.gridTileDisplaySize = this.table.querySelector('td').getBoundingClientRect().width;
     const gridDisplaySize = this.table.getBoundingClientRect();
+    this.canvasSize = gridDisplaySize.height;
     this.canvas.setAttribute('width', gridDisplaySize.width.toString());
-    this.canvas.setAttribute('height', gridDisplaySize.height.toString());
+    this.canvas.setAttribute('height', this.canvasSize.toString());
   }
 
   private get canvas(): HTMLCanvasElement {
@@ -126,18 +176,28 @@ export class WordSearchComponent implements OnInit {
     return this.gridTableRef.nativeElement;
   }
 
-  private drawLine(from: GridPosition, to: GridPosition) {
-    const CanvasHeight = toNumber(this.canvas.getAttribute('height'));
-    const dc = this.drawContext;
+  private toCanvasPoint(position: GridPosition): CanvasPoint {
+    const CanvasHeight = this.canvasSize;
     const tileSize = this.gridTileDisplaySize;
     const toPixels = (letterPosition: number) => letterPosition * tileSize + tileSize / 2;
+    return {
+      x: toPixels(position.x),
+      y: CanvasHeight - toPixels(position.y),
+    };
+  }
+
+  private drawLine(from: GridPosition, to: GridPosition) {
+    const dc = this.drawContext;
     dc.strokeStyle = this.canvasStrokeColor;
     dc.lineCap = 'round';
     dc.lineWidth = 3;
-    dc.beginPath();
-    dc.moveTo(toPixels(from.x), CanvasHeight - toPixels(from.y));
-    dc.lineTo(toPixels(to.x), CanvasHeight - toPixels(to.y));
-    dc.stroke();
+    const animation = new CanvasLineAnimation(
+      dc,
+      this.toCanvasPoint(from),
+      this.toCanvasPoint(to),
+      1000
+    );
+    animation.begin();
   }
 
   private setSize(width: number, height: number): void {
@@ -181,12 +241,10 @@ export class WordSearchComponent implements OnInit {
     });
 
     dialogRef.afterClosed().filter(result => !!result)
-    .subscribe(
-      result => {
-        this.setSize(result.width, result.height);
-        this.generate(result.words);
-      },
-    );
+    .subscribe(result => {
+      this.setSize(result.width, result.height);
+      this.generate(result.words);
+    });
   }
 
   public get rows(): number[] {
