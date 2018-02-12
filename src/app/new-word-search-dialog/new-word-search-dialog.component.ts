@@ -101,8 +101,11 @@ export class NewWordSearchDialogComponent implements OnInit {
   }
 
   public searchCategory() {
-    this._isAwaitingSearch = true;
     const word = this.category;
+    if (!word) {
+      return;
+    }
+    this._isAwaitingSearch = true;
     this.hyponymQuery.query(word)
     .catch(err => {
       this.simpleSnackBar(`Could not connect to find words.  Please enter words manually for now.`);
