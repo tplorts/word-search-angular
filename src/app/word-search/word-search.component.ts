@@ -10,16 +10,20 @@ import {
 } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/timer';
+import 'rxjs/add/operator/filter';
 import { toNumber } from 'lodash';
 
-import { Logger } from '../core/logger.service';
+import { Logger } from '@app/core/logger.service';
+import { WordSearch } from '@app/model/WordSearch';
+import { WordSearchSolver } from '@app/model/WordSearchSolver';
+import { GridPosition } from '@app/model/GridPosition';
+import { Grid } from '@app/model/Grid';
+import { integerSequence } from '@app/model/helpers';
 import { WordSearchService } from './word-search.service';
-import { WordSearch } from '../model/WordSearch';
-import { WordSearchSolver } from '../model/WordSearchSolver';
-import { GridPosition } from '../model/GridPosition';
-import { Grid } from '../model/Grid';
-import { integerSequence } from '../model/helpers';
-import { NewWordSearchDialogComponent } from '../new-word-search-dialog/new-word-search-dialog.component';
+import {
+  NewWordSearchDialogComponent,
+  IWordSearchParameters,
+} from '@app/new-word-search-dialog/new-word-search-dialog.component';
 
 
 
@@ -176,15 +180,13 @@ export class WordSearchComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe(
+    dialogRef.afterClosed().filter(result => !!result)
+    .subscribe(
       result => {
-        if (result) {
-          this.setSize(result.width, result.height);
-          this.generate(result.words);
-        }
+        this.setSize(result.width, result.height);
+        this.generate(result.words);
       },
     );
-
   }
 
   public get rows(): number[] {

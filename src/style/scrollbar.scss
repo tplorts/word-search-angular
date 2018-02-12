@@ -4,49 +4,58 @@
 $DefaultScrollbarThickness: 10px;
 
 
-@mixin custom-scrollbar($scrollbarThickness: $DefaultScrollbarThickness) {
+@mixin custom-scrollbar(
+  $thickness: $DefaultScrollbarThickness,
+  $colorPalette: $palette-accent
+) {
 
-  $scrollbarTrackColor: map-get($palette-accent, 50);
-  $scrollbarThumbColor: map-get($palette-accent, 200);
-  $shadowSize: $scrollbarThickness / 2;
+  $trackColor: map-get($colorPalette, 50);
+  $thumbColor: map-get($colorPalette, 200);
+  $shadowSize: $thickness / 2;
 
   &::-webkit-scrollbar {
-    background-color: $scrollbarTrackColor;
+    background-color: $trackColor;
 
     &-track,
     &-thumb {
       box-shadow: inset 0 0 $shadowSize rgba(0, 0, 0, 0.3);
-      border-radius: $scrollbarThickness;
+      border-radius: $thickness;
     }
 
     &-track {
-      background-color: $scrollbarTrackColor;
+      background-color: $trackColor;
     }
 
     &-thumb {
-      background-color: $scrollbarThumbColor;
+      background-color: $thumbColor;
     }
   }
 }
 
 
-@mixin custom-horizontal-scrollbar($scrollbarThickness: $DefaultScrollbarThickness) {
+@mixin custom-horizontal-scrollbar(
+  $thickness: $DefaultScrollbarThickness,
+  $colorPalette: $palette-accent
+) {
   overflow-x: scroll;
 
   &::-webkit-scrollbar {
-    height: $scrollbarThickness;
+    height: $thickness;
   }
 
-  @include custom-scrollbar($scrollbarThickness);
+  @include custom-scrollbar($thickness, $colorPalette);
 }
 
 
-@mixin custom-vertical-scrollbar($scrollbarThickness: $DefaultScrollbarThickness) {
+@mixin custom-vertical-scrollbar(
+  $thickness: $DefaultScrollbarThickness,
+  $colorPalette: $palette-accent
+) {
   overflow-y: scroll;
 
   &::-webkit-scrollbar {
-    width: $scrollbarThickness;
+    width: $thickness;
   }
 
-  @include custom-scrollbar($scrollbarThickness);
+  @include custom-scrollbar($thickness, $colorPalette);
 }

@@ -2,6 +2,8 @@ import {
   Component,
   OnInit,
   Inject,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import {
   MatDialog,
@@ -17,12 +19,22 @@ import {
 } from '@angular/forms';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/finally';
-import { uniqBy } from 'lodash';
+import 'rxjs/add/operator/filter';
+import { sortBy, sortedUniqBy } from 'lodash';
 import { HyponymsQueryService } from '@app/shared/hyponyms-query.service';
+import { WordSelectDialogComponent } from '@app/word-select-dialog/word-select-dialog.component';
 
 
 const lettersOnly = (s: string) => s.replace(/[^A-Z]/gi, '');
 const asUpperCase = (s: string) => s.toUpperCase();
+
+
+export interface IWordSearchParameters {
+  width: number;
+  height: number;
+  category?: string;
+  words: string[];
+}
 
 
 @Component({
@@ -34,12 +46,14 @@ export class NewWordSearchDialogComponent implements OnInit {
 
   public formGroup: FormGroup;
   private _isAwaitingSearch: boolean;
+  @ViewChild('wordsFieldInput') _wordsFieldInput: ElementRef;
 
   constructor(
-    public dialogRef: MatDialogRef<NewWordSearchDialogComponent>,
+    public dialogRef: MatDialogRef<NewWordSearchDialogComponent, IWordSearchParameters>,
     @Inject(MAT_DIALOG_DATA) public priorData: any,
     private formBuilder: FormBuilder,
     private hyponymQuery: HyponymsQueryService,
+    private dialog: MatDialog,
     private snackBar: MatSnackBar,
   ) {
     this._isAwaitingSearch = false;
@@ -99,8 +113,9 @@ export class NewWordSearchDialogComponent implements OnInit {
       if (hyponyms && hyponyms.length > 0) {
         // Important that we strip any non-letter characters before
         // eliminating duplicates.
-        const uniqueHyponyms = uniqBy(hyponyms.map(lettersOnly), asUpperCase);
-        this.wordsField.setValue(uniqueHyponyms.join('\n'));
+        const sortedHypernyms = sortBy(hyponyms.map(lettersOnly), asUpperCase);
+        const uniqueHyponyms = sortedUniqBy(sortedHypernyms, asUpperCase);
+        this.openWordSelection(word, uniqueHyponyms);
       } else {
         this.simpleSnackBar(`${word} didn't yield any results; try another`);
       }
@@ -111,7 +126,7 @@ export class NewWordSearchDialogComponent implements OnInit {
     return this._isAwaitingSearch;
   }
 
-  public get parameters() {
+  public get parameters(): IWordSearchParameters {
     return {
       width: this.widthField.value,
       height: this.heightField.value,
@@ -123,4 +138,16 @@ export class NewWordSearchDialogComponent implements OnInit {
   private simpleSnackBar(message: string) {
     this.snackBar.open(message, '', { duration: 5e3 });
   }
+
+  private openWordSelection(seedWord: string, words: string[]): void {
+    const data = { seedWord, words };
+    this.dialog.open(WordSelectDialogComponent, { data })
+    .afterClosed().filter(result => !!result).subscribe(
+      result => {
+        this.wordsField.setValue(result.words.join('\n'));
+        (<HTMLTextAreaElement> this._wordsFieldInput.nativeElement).focus();
+      },
+    );
+  }
+
 }

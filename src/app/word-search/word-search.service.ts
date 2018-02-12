@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { WordSearch } from '../model/WordSearch';
+import { WordSearch } from '@app/model/WordSearch';
 
 
 

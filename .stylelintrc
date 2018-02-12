@@ -24,14 +24,14 @@
     "selector-id-pattern": "[a-z-]+",
     "selector-max-id": 0,
     "selector-no-qualifying-type": true,
-    "selector-max-universal": 0,
+    "selector-max-universal": 1,
     "selector-pseudo-element-no-unknown": [
       true,
       {
         "ignorePseudoElements": ["ng-deep"]
       }
     ],
-    "unit-whitelist": ["px", "%", "em", "rem", "vw", "vh", "deg", "s"],
+    "unit-whitelist": ["px", "%", "em", "rem", "vw", "vh", "deg", "s", "fr"],
     "max-empty-lines": 2,
     "max-line-length": 120
   }

@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Choose from these words</h2>
+
+<p class="description">
+  These are the words I found related to <strong>{{ seedWord }}</strong>.
+  Some of them might not be what you had in mind, and some may be redundant,
+  so take a moment to select which of these words you would like to add to your word search.
+</p>
+
+<div class="list-actions">
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="wordSelectionList.selectAll()"
+  >Select All</button>
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="wordSelectionList.deselectAll()"
+  >Deselect All</button>
+</div>
+
+<mat-dialog-content class="content">
+  <mat-selection-list
+    #wordSelectionList
+  >
+    <mat-list-option 
+      *ngFor="let word of words"
+      [value]="word"
+    >
+      {{ word }}
+    </mat-list-option>
+  </mat-selection-list>
+</mat-dialog-content>
+
+<mat-dialog-actions class="actions">
+  <button mat-button mat-dialog-close>Discard</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [mat-dialog-close]="results(wordSelectionList)"
+  >Use Selected Words</button>
+</mat-dialog-actions>

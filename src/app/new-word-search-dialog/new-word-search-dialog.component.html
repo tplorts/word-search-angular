@@ -57,11 +57,14 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field>
-      <textarea matInput
+    <mat-form-field class="words-field">
+      <textarea 
+        matInput
+        #wordsFieldInput
         required
         matTextareaAutosize
-        matAutosizeMaxRows="10"
+        matAutosizeMaxRows="20"
+        matAutosizeMinRows="5"
         placeholder="Enter one word per line"
         formControlName="wordsText"
       ></textarea>

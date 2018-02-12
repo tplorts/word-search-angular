@@ -1,9 +1,24 @@
+@import "src/style/colors";
+@import "src/style/utilities";
+
+
 .mat-form-field {
   display: block;
 }
 
 .category-search-button {
   cursor: pointer;
+}
+
+.words-field {
+  $pad: 0.5rem;
+
+  textarea {
+    box-shadow: inset 0 0 $pad 0 rgba(black, 0.2);
+    padding: $pad;
+
+    @include custom-vertical-scrollbar($colorPalette: $palette-primary);
+  }
 }
 
 .actions {
