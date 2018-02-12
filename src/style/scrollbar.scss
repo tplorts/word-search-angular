@@ -35,9 +35,10 @@ $DefaultScrollbarThickness: 10px;
 
 @mixin custom-horizontal-scrollbar(
   $thickness: $DefaultScrollbarThickness,
+  $alwaysShow: false,
   $colorPalette: $palette-accent
 ) {
-  overflow-x: scroll;
+  overflow-x: if($alwaysShow, scroll, auto);
 
   &::-webkit-scrollbar {
     height: $thickness;
@@ -49,9 +50,10 @@ $DefaultScrollbarThickness: 10px;
 
 @mixin custom-vertical-scrollbar(
   $thickness: $DefaultScrollbarThickness,
+  $alwaysShow: false,
   $colorPalette: $palette-accent
 ) {
-  overflow-y: scroll;
+  overflow-y: if($alwaysShow, scroll, auto);
 
   &::-webkit-scrollbar {
     width: $thickness;

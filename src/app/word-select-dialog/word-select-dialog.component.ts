@@ -1,9 +1,8 @@
-import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
   MatSelectionList,
-  // MatSelectionList
 } from '@angular/material';
 
 
@@ -23,7 +22,6 @@ export class WordSelectDialogComponent implements OnInit {
   private _seedWord: string;
   private _allWords: string[];
   private _selectedWords: string[];
-  // @ViewChild('wordSelectionList') selectionList: ElementRef;
 
   constructor(
     public dialogRef: MatDialogRef<WordSelectDialogComponent>,
@@ -56,8 +54,4 @@ export class WordSelectDialogComponent implements OnInit {
       mode: WordSelectionMode.Add,
     };
   }
-
-  // public onSelectionChange(list: MatSelectionList) {
-  //   this._selectedWords = list.selectedOptions.selected.map(option => option.value);
-  // }
 }

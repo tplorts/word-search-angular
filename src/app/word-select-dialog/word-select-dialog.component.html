@@ -38,5 +38,6 @@
     mat-raised-button
     color="primary"
     [mat-dialog-close]="results(wordSelectionList)"
+    [disabled]="!wordSelectionList.selectedOptions.selected.length"
   >Use Selected Words</button>
 </mat-dialog-actions>

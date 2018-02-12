@@ -140,8 +140,11 @@ export class NewWordSearchDialogComponent implements OnInit {
   }
 
   private openWordSelection(seedWord: string, words: string[]): void {
-    const data = { seedWord, words };
-    this.dialog.open(WordSelectDialogComponent, { data })
+    this.dialog.open(WordSelectDialogComponent, {
+      data: { seedWord, words },
+      autoFocus: false,
+      maxHeight: '96vh',
+    })
     .afterClosed().filter(result => !!result).subscribe(
       result => {
         this.wordsField.setValue(result.words.join('\n'));
